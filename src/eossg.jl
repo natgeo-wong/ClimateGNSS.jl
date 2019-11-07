@@ -20,7 +20,7 @@ function eosload(reg)
 end
 
 function eosresortsave(zwd::AbstractArray,sig::AbstractArray,
-    info::AbstractArray,yrii::Integer,root::AbstractString)
+    info::AbstractArray,yrii::Integer,groot::AbstractString)
 
     ndays = Dates.daysinyear(dt::TimeType); nhours = 144;
     zwd = reshape(zwd,nhours,ndays); sig = reshape(sig,nhours,ndays);
@@ -54,6 +54,13 @@ function eosresortsave(zwd::AbstractArray,sig::AbstractArray,
 
     @debug "$(Dates.now()) - NetCDF.jl's ncread causes memory leakage.  Using ncclose() as a workaround."
     ncclose()
+
+    gfol = joinpath(groot,info[1,:]);
+    @info "$(Dates.now()) - Moving $(fnc) to data directory $(gfol)"
+
+    if isfile(joinpath(gfol,fnc)); @info "$(Dates.now()) - An older version of $(fnc) exists in the $(gfol) directory.  Overwriting." end
+
+    mv(fnc,joinpath(gfol,fnc),force=true);
 
 end
 

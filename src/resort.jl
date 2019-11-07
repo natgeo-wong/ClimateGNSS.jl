@@ -4,18 +4,19 @@ Dump all the resort scripts here.  Currently supports:
     - NGL-UNAVCO
 """
 
-function eosresort(stations::AbstractArray,groot::AbstractString)
+function eosresort(stations::AbstractArray,groot::Dict)
 
     for ii = 1 : size(stations,1)
 
-        fraw  = joinpath(groot,stations[ii,1],"$(stations[ii,2]).tdpzwd");
+        fraw  = joinpath(groot["raw"],stations[ii,1],"$(stations[ii,2]).tdpzwd");
         info  = stations[ii,:];
         gdata = readdlm(fraw,Float64,comments=true); gdata = gdata[:,2:end];
         gdata[:,2] = DateTime(2000,1,1,12,0,0) + Millisecond.(gdata[:,2]);
         yr = Dates.year.(gdata[:,2]);
 
         for yrii = yrbeg : yrend
-            zwd,sig = eosextractyear(gdata,info,yr,yrii); eosresortsave(zwd,sig,stationinfo,yrii);
+            zwd,sig = eosextractyear(gdata,info,yr,yrii);
+            eosresortsave(zwd,sig,stationinfo,yrii,groot["data"]);
         end
 
     end
