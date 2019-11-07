@@ -72,8 +72,8 @@ function eosextractyear(gnssdata::AbstractArray,info::AbstractArray,
     zwd = zeros(size(yrdates)); sig = zeros(size(yrdates));
 
     for ti = 1 : size(yrdates,1)
-        try jj = findfirst(isequal(yrdates[ti]),gnssdata[:,1])
-               zwd[ti] = gnssdata[jj,2]; sig[ti] = gnssdata[jj,3]
+        try jj = findfirst(isequal(yrdates[ti]),gnssdata[:,2])
+               zwd[ti] = gnssdata[jj,3]; sig[ti] = gnssdata[jj,4]
         catch; zwd[ti] = NaN; sig[ti] = NaN;
         end
     end
