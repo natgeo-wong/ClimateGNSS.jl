@@ -4,7 +4,7 @@ Dump all the resort scripts here.  Currently supports:
     - NGL-UNAVCO
 """
 
-function eosresort(stations::Array,groot::AbstractString)
+function eosresort(stations::AbstractArray,groot::AbstractString)
 
     for ii = 1 : size(stations,1)
 
