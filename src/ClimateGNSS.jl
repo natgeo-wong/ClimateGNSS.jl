@@ -5,7 +5,7 @@ module ClimateGNSS
 
 ## Modules Used
 using Dates, DelimitedFiles, Printf
-using NetCDF, Glob, JLD2, FileIO
+using NetCDF
 using ClimateEasy
 
 ## Exporting the following functions:
