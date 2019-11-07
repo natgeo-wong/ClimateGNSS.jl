@@ -6,11 +6,12 @@ Earth Observatory of Singapore (EOS-SG) maintains.
 
 function eosload(reg)
 
-    @debug "$(Dates.now()) - Loading information on available GNSS/GPS stations provided by the Earth Observatory of Singapore (EOS-SG)."
+    @info "$(Dates.now()) - Loading information on available GNSS/GPS stations provided by the Earth Observatory of Singapore (EOS-SG)."
     allstn = readdlm(joinpath(@__DIR__,"GNSS-EOS-SG.txt"),',',comments=true);
 
-    @debug "$(Dates.now()) - Filtering out for stations in the $(regionfullname(reg)) region."
-    scoord = allstn[:,2:3]; stations = allstn[ispointinregion.(scoord,reg),:]; nstns = size(stn,1);
+    @info "$(Dates.now()) - Filtering out for stations in the $(regionfullname(reg)) region."
+    lon = allstn[:,2]; lat = allstn[:,3];
+    stations = allstn[ispointinregion.(lon,lat,reg),:]; nstns = size(stations,1);
 
     @info "$(Dates.now()) - There are $(nstns) stations maintained by the Earth Observatory of Singapore (EOS-SG) in the $(regionfullname(reg)) region with Zenith Wet Delay data."
 
