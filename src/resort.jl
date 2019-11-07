@@ -8,7 +8,7 @@ function eosresort(stations::AbstractArray,groot::Dict)
 
     for ii = 1 : size(stations,1)
 
-        fraw  = joinpath(groot["raw"],stations[ii,1],"$(stations[ii,2]).tdpzwd");
+        fraw  = joinpath(groot["raw"],"$(stations[ii,1]).tdpzwd");
         info  = stations[ii,:];
         gdata = readdlm(fraw,Float64,comments=true); gdata = gdata[:,2:end];
         gdata[:,2] = DateTime(2000,1,1,12,0,0) + Millisecond.(gdata[:,2]);
