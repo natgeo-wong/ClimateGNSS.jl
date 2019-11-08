@@ -12,7 +12,7 @@ function eosresort(stations::AbstractArray,groot::Dict)
         info  = stations[ii,:];
 
         @info "$(Dates.now()) - Extracting available data from $(stations[ii,1]) GNSS station from file $(fraw)"
-        gdata = readdlm(fraw,comments=true);
+        gdata = readdlm(fraw,Any,comments=true);
         gdata[:,2] .= DateTime(2000,1,1,12,0,0) + Millisecond.(gdata[:,2]);
         yr = Dates.year.(gdata[:,2]);
 
