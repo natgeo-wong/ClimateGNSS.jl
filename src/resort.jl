@@ -14,7 +14,7 @@ function eosresort(stations::AbstractArray,groot::Dict)
         @info "$(Dates.now()) - Extracting available data from $(stations[ii,1]) GNSS station from file $(fraw)"
         gdata = readdlm(fraw,Any,comments=true);
         gdata[:,2] .= DateTime(2000,1,1,12,0,0) + Second.(gdata[:,2]);
-        yr = Dates.year.(gdata[:,2]);
+        yr = Dates.year.(gdata[:,2]); yrbeg = minimum(yr); yrend = maximum(yr);
 
         for yrii = yrbeg : yrend
             zwd,sig = eosextractyear(gdata,info,yr,yrii);
