@@ -68,7 +68,7 @@ function eosextractyear(gnssdata::AbstractArray,info::AbstractArray,
     yrArray::AbstractArray,yrii::Integer)
 
     yrdates = convert(Array,DateTime(yrii,1,1):Minute(10):DateTime(yrii+1,1,1));
-    gnssdata = gnssdata[yrArray==yrii,:];
+    gnssdata = gnssdata[findall(isequal(yrii),yrArray),:];
     zwd = zeros(size(yrdates)); sig = zeros(size(yrdates));
 
     for ti = 1 : size(yrdates,1)
