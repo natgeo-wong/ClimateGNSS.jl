@@ -5,9 +5,9 @@ Dump all the resort scripts here.  Currently supports:
 """
 
 function gnssfol(groot::AbstractString,stationname::AbstractString)
-    gfol = joinpath(groot,fol)
+    gfol = joinpath(groot,stationname)
     if !isdir(gfol)
-        @info "$(Dates.now()) - GNSS Zenith Wet Delay data directory for $(fol) does not exist."
+        @info "$(Dates.now()) - GNSS Zenith Wet Delay data directory for $(stationname) does not exist."
         @info "$(Dates.now()) - Creating data directory $(gfol)."; mkpath(gfol);
     end
     return gfol
