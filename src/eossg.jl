@@ -48,9 +48,9 @@ function eosresortsave(zwd::AbstractArray,sig::AbstractArray,
     @info "$(Dates.now()) - Saving GNSS Zenith Wet Delay data to netCDF file $(fnc) ..."
     ncwrite(zwd,fnc,var_zwd);
     ncwrite(sig,fnc,var_sig);
-    ncwrite(info[2],fnc,var_lon);
-    ncwrite(info[3],fnc,var_lat);
-    ncwrite(info[4],fnc,var_z);
+    ncwrite([info[2]],fnc,var_lon);
+    ncwrite([info[3]],fnc,var_lat);
+    ncwrite([info[4]],fnc,var_z);
 
     @debug "$(Dates.now()) - NetCDF.jl's ncread causes memory leakage.  Using ncclose() as a workaround."
     ncclose()
