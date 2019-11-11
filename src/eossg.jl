@@ -67,7 +67,7 @@ end
 function eosextractyear(gnssdata::AbstractArray,info::AbstractArray,
     yrArray::AbstractArray,yrii::Integer)
 
-    yrdates = convert(Array,DateTime(yrii,1,1):Minute(10):DateTime(yrii+1,1,1));
+    yrdates = convert(Array,DateTime(yrii,1,1):Minute(10):DateTime(yrii+1,1,1)); pop!(yrdates);
 
     @debug "$(Dates.now()) - Extracting GNSS Zenith Wet Delay data for Year $(yrii) ..."
     gnssdata = gnssdata[findall(isequal(yrii),yrArray),:];
