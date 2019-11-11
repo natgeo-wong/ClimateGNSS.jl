@@ -71,12 +71,12 @@ function eosextractyear(gnssdata::AbstractArray,info::AbstractArray,
 
     @debug "$(Dates.now()) - Extracting GNSS Zenith Wet Delay data for Year $(yrii) ..."
     gnssdata = gnssdata[findall(isequal(yrii),yrArray),:];
-    zwd = zeros(size(yrdates)); sig = zeros(size(yrdates)); jj = 0;
+    zwd = zeros(size(yrdates)); sig = zeros(size(yrdates)); ei = 0;
 
     for ti = 1 : size(yrdates,1)
         try jj = findfirst(isequal(yrdates[ti]),gnssdata[:,2])
                zwd[ti] = gnssdata[jj,3]; sig[ti] = gnssdata[jj,4]
-        catch; zwd[ti] = NaN; sig[ti] = NaN; jj = jj + 1;
+        catch; zwd[ti] = NaN; sig[ti] = NaN; ei = ei + 1;
         end
     end
 
