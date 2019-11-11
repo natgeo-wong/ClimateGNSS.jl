@@ -38,7 +38,7 @@ function eosresortsave(zwd::AbstractArray,sig::AbstractArray,
         rm(fnc);
     end
 
-    @info "$(Dates.now()) - Creating GPM Near-RealTime (Late) precipitation netCDF file $(fnc) ..."
+    @info "$(Dates.now()) - Creating GNSS Zenith Wet Delay netCDF file $(fnc) ..."
     nccreate(fnc,var_zwd,"nhours",nhours,"ndays",ndays,atts=att_zwd,t=NC_FLOAT);
     nccreate(fnc,var_sig,"nhours",nhours,"ndays",ndays,atts=att_sig,t=NC_FLOAT);
     nccreate(fnc,var_lon,"position",1,atts=att_lon,t=NC_FLOAT);
@@ -55,9 +55,9 @@ function eosresortsave(zwd::AbstractArray,sig::AbstractArray,
     @debug "$(Dates.now()) - NetCDF.jl's ncread causes memory leakage.  Using ncclose() as a workaround."
     ncclose()
 
-    gfol = joinpath(groot,info[1]);
-    @info "$(Dates.now()) - Moving $(fnc) to data directory $(gfol)"
+    gfol = gnssfol(groot,info[1])
 
+    @info "$(Dates.now()) - Moving $(fnc) to data directory $(gfol)"
     if isfile(joinpath(gfol,fnc)); @info "$(Dates.now()) - An older version of $(fnc) exists in the $(gfol) directory.  Overwriting." end
 
     mv(fnc,joinpath(gfol,fnc),force=true);

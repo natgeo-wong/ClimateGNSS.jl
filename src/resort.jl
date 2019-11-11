@@ -4,6 +4,15 @@ Dump all the resort scripts here.  Currently supports:
     - NGL-UNAVCO
 """
 
+function gnssfol(groot::AbstractString,stationname::AbstractString)
+    gfol = joinpath(groot,fol)
+    if !isdir(gfol)
+        @info "$(Dates.now()) - GNSS Zenith Wet Delay data directory for $(fol) does not exist."
+        @info "$(Dates.now()) - Creating data directory $(gfol)."; mkpath(gfol);
+    end
+    return gfol
+end
+
 function eosresort(stations::AbstractArray,groot::Dict)
 
     for ii = 1 : size(stations,1)
