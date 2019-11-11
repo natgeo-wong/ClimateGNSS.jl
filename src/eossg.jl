@@ -25,7 +25,7 @@ function eosresortsave(zwd::AbstractArray,sig::AbstractArray,
     ndays = Dates.daysinyear(yrii); nhours = 144;
     zwd = reshape(zwd,nhours,ndays); sig = reshape(sig,nhours,ndays);
 
-    fnc = "$(info[1])-$(info[2])-$(yrii).nc"
+    fnc = "$(info[1])-$(yrii).nc"
 
     var_zwd = "zwd"; att_zwd = Dict("units" => "m");
     var_sig = "sig"; att_sig = Dict("units" => "m");
@@ -48,14 +48,14 @@ function eosresortsave(zwd::AbstractArray,sig::AbstractArray,
     @info "$(Dates.now()) - Saving GNSS Zenith Wet Delay data to netCDF file $(fnc) ..."
     ncwrite(zwd,fnc,var_zwd);
     ncwrite(sig,fnc,var_sig);
-    ncwrite(lon,fnc,var_lon);
-    ncwrite(lat,fnc,var_lat);
-    ncwrite(z,fnc,var_z);
+    ncwrite(info[2],fnc,var_lon);
+    ncwrite(info[3],fnc,var_lat);
+    ncwrite(info[4],fnc,var_z);
 
     @debug "$(Dates.now()) - NetCDF.jl's ncread causes memory leakage.  Using ncclose() as a workaround."
     ncclose()
 
-    gfol = joinpath(groot,info[1,:]);
+    gfol = joinpath(groot,info[1]);
     @info "$(Dates.now()) - Moving $(fnc) to data directory $(gfol)"
 
     if isfile(joinpath(gfol,fnc)); @info "$(Dates.now()) - An older version of $(fnc) exists in the $(gfol) directory.  Overwriting." end
