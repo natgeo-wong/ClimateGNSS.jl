@@ -22,7 +22,7 @@ end
 function eosresortsave(zwd::AbstractArray,sig::AbstractArray,
     info::AbstractArray,yrii::Integer,groot::AbstractString)
 
-    ndays = Dates.daysinyear(dt::TimeType); nhours = 144;
+    ndays = Dates.daysinyear(yrii); nhours = 144;
     zwd = reshape(zwd,nhours,ndays); sig = reshape(sig,nhours,ndays);
 
     fnc = "$(info[1])-$(info[2])-$(yrii).nc"
