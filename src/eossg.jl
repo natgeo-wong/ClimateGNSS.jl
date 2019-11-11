@@ -41,9 +41,9 @@ function eosresortsave(zwd::AbstractArray,sig::AbstractArray,
     @info "$(Dates.now()) - Creating GPM Near-RealTime (Late) precipitation netCDF file $(fnc) ..."
     nccreate(fnc,var_zwd,"nhours",nhours,"ndays",ndays,atts=att_zwd,t=NC_FLOAT);
     nccreate(fnc,var_sig,"nhours",nhours,"ndays",ndays,atts=att_sig,t=NC_FLOAT);
-    nccreate(fnc,var_lon,atts=att_lon,t=NC_FLOAT);
-    nccreate(fnc,var_lat,atts=att_lat,t=NC_FLOAT);
-    nccreate(fnc,var_z,atts=att_z,t=NC_FLOAT);
+    nccreate(fnc,var_lon,"position",1,atts=att_lon,t=NC_FLOAT);
+    nccreate(fnc,var_lat,"position",1,atts=att_lat,t=NC_FLOAT);
+    nccreate(fnc,var_z,"position",1,atts=att_z,t=NC_FLOAT);
 
     @info "$(Dates.now()) - Saving GNSS Zenith Wet Delay data to netCDF file $(fnc) ..."
     ncwrite(zwd,fnc,var_zwd);
