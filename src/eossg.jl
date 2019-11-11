@@ -80,7 +80,7 @@ function eosextractyear(gnssdata::AbstractArray,info::AbstractArray,
         end
     end
 
-    @debug "$(Dates.now()) - There are $(jj) entries without any valid data for Year $(yrii)."
+    @debug "$(Dates.now()) - There are $(ei) entries without any valid data for Year $(yrii)."
     return zwd,sig
 
 end
