@@ -45,7 +45,7 @@ function eosresortsave(zwd::AbstractArray,sig::AbstractArray,
     nccreate(fnc,var_lat,atts=att_lat,t=NC_FLOAT);
     nccreate(fnc,var_z,atts=att_z,t=NC_FLOAT);
 
-    @info "$(Dates.now()) - Saving GPM Near-RealTime (Late) precipitation data to netCDF file $(fnc) ..."
+    @info "$(Dates.now()) - Saving GNSS Zenith Wet Delay data to netCDF file $(fnc) ..."
     ncwrite(zwd,fnc,var_zwd);
     ncwrite(sig,fnc,var_sig);
     ncwrite(lon,fnc,var_lon);
@@ -68,16 +68,19 @@ function eosextractyear(gnssdata::AbstractArray,info::AbstractArray,
     yrArray::AbstractArray,yrii::Integer)
 
     yrdates = convert(Array,DateTime(yrii,1,1):Minute(10):DateTime(yrii+1,1,1));
+
+    @debug "$(Dates.now()) - Extracting GNSS Zenith Wet Delay data for Year $(yrii) ..."
     gnssdata = gnssdata[findall(isequal(yrii),yrArray),:];
-    zwd = zeros(size(yrdates)); sig = zeros(size(yrdates));
+    zwd = zeros(size(yrdates)); sig = zeros(size(yrdates)); jj = 0;
 
     for ti = 1 : size(yrdates,1)
         try jj = findfirst(isequal(yrdates[ti]),gnssdata[:,2])
                zwd[ti] = gnssdata[jj,3]; sig[ti] = gnssdata[jj,4]
-        catch; zwd[ti] = NaN; sig[ti] = NaN;
+        catch; zwd[ti] = NaN; sig[ti] = NaN; jj = jj + 1;
         end
     end
 
+    @debug "$(Dates.now()) - There are $(jj) entries without any valid data for Year $(yrii)."
     return zwd,sig
 
 end

@@ -11,15 +11,19 @@ function eosresort(stations::AbstractArray,groot::Dict)
         fraw  = joinpath(groot["raw"],"$(stations[ii,1]).tdpzwd");
         info  = stations[ii,:];
 
-        @info "$(Dates.now()) - Extracting available data from $(stations[ii,1]) GNSS station from file $(fraw)"
+        @info "$(Dates.now()) - Available data from $(stations[ii,1]) GNSS station will be extracted from file $(fraw)."
         gdata = readdlm(fraw,Any,comments=true);
+
+        @info "$(Dates.now()) - Converting J2000 seconds data into Julia DateTime format ..."
         gdata[:,2] .= DateTime(2000,1,1,12,0,0) + Second.(gdata[:,2]);
         yr = Dates.year.(gdata[:,2]); yrbeg = minimum(yr); yrend = maximum(yr);
 
+        @info "$(Dates.now()) - Extracting Zenith Wet Delay data from the GNSS station $(stations[ii,1]) ..."
         for yrii = yrbeg : yrend
             zwd,sig = eosextractyear(gdata,info,yr,yrii);
             eosresortsave(zwd,sig,stationinfo,yrii,groot["data"]);
         end
+        @info "$(Dates.now()) - Zenith Wet Delay data from the GNSS station $(stations[ii,1]) has been extracted and saved into yearly NetCDF files."
 
     end
 
