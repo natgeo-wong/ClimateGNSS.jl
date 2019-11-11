@@ -21,7 +21,7 @@ function eosresort(stations::AbstractArray,groot::Dict)
         @info "$(Dates.now()) - Extracting Zenith Wet Delay data from the GNSS station $(stations[ii,1]) ..."
         for yrii = yrbeg : yrend
             zwd,sig = eosextractyear(gdata,info,yr,yrii);
-            eosresortsave(zwd,sig,stationinfo,yrii,groot["data"]);
+            eosresortsave(zwd,sig,info,yrii,groot["data"]);
         end
         @info "$(Dates.now()) - Zenith Wet Delay data from the GNSS station $(stations[ii,1]) has been extracted and saved into yearly NetCDF files."
 
