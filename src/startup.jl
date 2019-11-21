@@ -8,7 +8,7 @@ include:
 
 function gnssroot(dataID::AbstractString)
 
-    path = joinpath("$(homedir)","research","data","GNSS-$(dataID)");
+    path = joinpath("$(homedir())","research","data","GNSS-$(dataID)");
     @warn "$(Dates.now()) - No directory path was given.  Setting to default path: $(path) for ClimateGNSS data downloads."
 
     if isdir(path)
