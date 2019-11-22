@@ -19,6 +19,17 @@ function eosload(reg)
 
 end
 
+function eosloadstation(name::AbstractString)
+
+    @info "$(Dates.now()) - Loading information on available GNSS/GPS stations provided by the Earth Observatory of Singapore (EOS-SG)."
+    allstn = readdlm(joinpath(@__DIR__,"GNSS-EOS-SG.txt"),',',comments=true);
+
+    @info "$(Dates.now()) - Finding information for station $(name)."
+    allnames = reginfo[:,1]; stnID = (allnames == name);
+    return allstn[stnID,:]
+
+end
+
 function eosresortsave(zwd::AbstractArray,sig::AbstractArray,
     info::AbstractArray,yrii::Integer,groot::AbstractString)
 
