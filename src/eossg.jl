@@ -25,7 +25,7 @@ function eosloadstation(name::AbstractString)
     allstn = readdlm(joinpath(@__DIR__,"GNSS-EOS-SG.txt"),',',comments=true);
 
     @info "$(Dates.now()) - Finding information for station $(name)."
-    allnames = allstn[:,1]; stnID = (allnames == name);
+    allnames = allstn[:,1]; stnID = (allnames .== name);
     return allstn[stnID,:]
 
 end
