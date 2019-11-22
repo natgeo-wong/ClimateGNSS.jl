@@ -10,8 +10,8 @@ using ClimateEasy
 
 ## Exporting the following functions:
 export
-        gnssroot, gnssresort, gnssanalysis,
-        eosload
+        gnssroot, gnssresort, gnssanalysis, gnssfol,
+        eosload, eosloadstation
 
 ## Including other files in the module
 
