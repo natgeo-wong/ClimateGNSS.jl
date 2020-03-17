@@ -5,8 +5,8 @@ module ClimateGNSS
 
 ## Modules Used
 using Dates, DelimitedFiles, Printf
-using NetCDF
-using ClimateEasy
+using NCDatasets
+using GeoRegions
 
 ## Exporting the following functions:
 export

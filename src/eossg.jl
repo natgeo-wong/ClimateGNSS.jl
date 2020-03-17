@@ -7,7 +7,7 @@ Earth Observatory of Singapore (EOS-SG) maintains.
 function eosload(reg)
 
     @info "$(Dates.now()) - Loading information on available GNSS/GPS stations provided by the Earth Observatory of Singapore (EOS-SG)."
-    allstn = readdlm(joinpath(@__DIR__,"GNSS-EOS-SG.txt"),',',comments=true);
+    allstn = readdlm(joinpath(@__DIR__,"../data/GNSS-EOS-SG.txt"),',',comments=true);
 
     @info "$(Dates.now()) - Filtering out for stations in the $(regionfullname(reg)) region."
     lon = allstn[:,2]; lat = allstn[:,3];
@@ -36,42 +36,41 @@ function eosresortsave(zwd::AbstractArray,sig::AbstractArray,
     ndays = Dates.daysinyear(yrii); nhours = 144;
     zwd = reshape(zwd,nhours,ndays); sig = reshape(sig,nhours,ndays);
 
-    fnc = "$(info[1])-$(yrii).nc"
-
-    var_zwd = "zwd"; att_zwd = Dict("units" => "m");
-    var_sig = "sig"; att_sig = Dict("units" => "m");
-    var_lon = "lon"; att_lon = Dict("units" => "degree");
-    var_lat = "lat"; att_lat = Dict("units" => "degree");
-    var_z   = "z";   att_z   = Dict("units" => "m");
-
+    gfol = gnssfol(groot,info[1]); fnc = joinpath(gfol,"$(info[1])-$(yrii).nc");
     if isfile(fnc)
         @info "$(Dates.now()) - Unfinished netCDF file $(fnc) detected.  Deleting."
         rm(fnc);
     end
+    
+    ds = Dataset(fnc,"c");
+    ds.dim["hour_of_day"] = nhours; ds.dim["day_of_month"] = nlat;
+
+    att_zwd = Dict("units"=>"m","standard_name"=>"zenith_wet_delay",
+                   "long_name"=>"Zenith Wet Delay",
+                   "scale_factor"=>1/65534,"add_offset"=>0.5,
+                   "missing_value"=-32768);
+    att_sig = Dict("units"=>"m","standard_name"=>"zenith_wet_delay_error",
+                   "long_name"=>"Zenith Wet Delay Uncertainty",
+                   "scale_factor"=>0.005/65534,"add_offset"=>0.0025,
+                   "missing_value"=-32768);
+    att_lon = Dict("units"=>"degrees_east","long_name"=>"longitude");
+    att_lat = Dict("units"=>"degrees_north","long_name"=>"latitude");
+    att_z   = Dict("units"=>"m","standard_name"=>"height_above_WGS84_surface",
+                   "long_name"=>"Orographic Height");
 
     @info "$(Dates.now()) - Creating GNSS Zenith Wet Delay netCDF file $(fnc) ..."
-    nccreate(fnc,var_zwd,"nhours",nhours,"ndays",ndays,atts=att_zwd,t=NC_FLOAT);
-    nccreate(fnc,var_sig,"nhours",nhours,"ndays",ndays,atts=att_sig,t=NC_FLOAT);
-    nccreate(fnc,var_lon,"position",1,atts=att_lon,t=NC_FLOAT);
-    nccreate(fnc,var_lat,"position",1,atts=att_lat,t=NC_FLOAT);
-    nccreate(fnc,var_z,"position",1,atts=att_z,t=NC_FLOAT);
 
-    @info "$(Dates.now()) - Saving GNSS Zenith Wet Delay data to netCDF file $(fnc) ..."
-    ncwrite(zwd,fnc,var_zwd);
-    ncwrite(sig,fnc,var_sig);
-    ncwrite([info[2]],fnc,var_lon);
-    ncwrite([info[3]],fnc,var_lat);
-    ncwrite([info[4]],fnc,var_z);
+    vzwd = defVar(ds,"zwd",Int16,("hour_of_day","day_of_month"),attrib=att_zwd);
+    vsig = defVar(ds,"sig",Int16,("hour_of_day","day_of_month"),attrib=att_sig);
+    vzwd.var[:] = zwd; vsig.var[:] = sig;
 
-    @debug "$(Dates.now()) - NetCDF.jl's ncread causes memory leakage.  Using ncclose() as a workaround."
-    ncclose()
+    defVar(ds,"longitude",info[2],attrib=att_lon);
+    defVar(ds,"latitude",info[3],attrib=att_lat);
+    defVar(ds,"z",info[4],attrib=att_z);
 
-    gfol = gnssfol(groot,info[1])
+    close(ds);
 
-    @info "$(Dates.now()) - Moving $(fnc) to data directory $(gfol)"
-    if isfile(joinpath(gfol,fnc)); @info "$(Dates.now()) - An older version of $(fnc) exists in the $(gfol) directory.  Overwriting." end
-
-    mv(fnc,joinpath(gfol,fnc),force=true);
+    @info "$(Dates.now()) - Zenith Wet Delay data for $(info[1]) has been saved into file $(fnc)."
 
 end
 
@@ -93,5 +92,30 @@ function eosextractyear(gnssdata::AbstractArray,info::AbstractArray,
 
     @debug "$(Dates.now()) - There are $(ei) entries without any valid data for Year $(yrii)."
     return zwd,sig
+
+end
+
+function eosresort(stations::AbstractArray,groot::Dict)
+
+    for ii = 1 : size(stations,1)
+
+        fraw  = joinpath(groot["raw"],"$(stations[ii,1]).tdpzwd");
+        info  = stations[ii,:];
+
+        @info "$(Dates.now()) - Available data from $(stations[ii,1]) GNSS station will be extracted from file $(fraw)."
+        gdata = readdlm(fraw,Any,comments=true);
+
+        @info "$(Dates.now()) - Converting J2000 seconds data into Julia DateTime format ..."
+        gdata[:,2] .= DateTime(2000,1,1,12,0,0) + Second.(gdata[:,2]);
+        yr = Dates.year.(gdata[:,2]); yrbeg = minimum(yr); yrend = maximum(yr);
+
+        @info "$(Dates.now()) - Extracting Zenith Wet Delay data from the GNSS station $(stations[ii,1]) ..."
+        for yrii = yrbeg : yrend
+            zwd,sig = eosextractyear(gdata,info,yr,yrii);
+            eosresortsave(zwd,sig,info,yrii,groot["data"]);
+        end
+        @info "$(Dates.now()) - Zenith Wet Delay data from the GNSS station $(stations[ii,1]) has been extracted and saved into yearly NetCDF files."
+
+    end
 
 end
